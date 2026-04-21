@@ -2,12 +2,13 @@
 // HeartQuest App - Main Entry Point
 // ============================================
 
-import React from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import WelcomeScreen from './screens/WelcomeScreen';
 import MapScreen from './screens/MapScreen';
 import CombatScreen from './screens/CombatScreen';
 import InventoryScreen from './screens/InventoryScreen';
@@ -26,6 +27,17 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const [isNewPlayer, setIsNewPlayer] = useState(true);
+  
+  if (isNewPlayer) {
+    return (
+      <SafeAreaProvider>
+        <StatusBar style="light" />
+        <WelcomeScreen onComplete={() => setIsNewPlayer(false)} />
+      </SafeAreaProvider>
+    );
+  }
+  
   return (
     <SafeAreaProvider>
       <NavigationContainer>
