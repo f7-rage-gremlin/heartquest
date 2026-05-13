@@ -3,87 +3,76 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    dream2nix = {
+      url = "github:dream2nix/dream2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
+  outputs = inputs @ { self, nixpkgs, dream2nix, ... }:
+    let
+      system = "x86_64-linux";
+      
+      # dream2nix setup
+      dream2nixOutputs = dream2nix.lib.makeFlakeOutputs2 {
+        inherit self;
+        inherit system;
+        config = {
+          projectRoot = ./.;
         };
-
-        # Node.js version for Expo SDK 54
-        nodejs = pkgs.nodejs_20;
+        projects = {
+          heartquest = {
+            name = "heartquest";
+            relPath = ".";
+            subsystem = "nodejs";
+            translator = "package-lock";
+            subsystemInfo.nodejs = "20";
+            fetchedSource = ./.;
+          };
+        };
+        packageSets = {
+          nodejs = nixpkgs.legacyPackages.${system}.nodejs_20.pkgs;
+        };
+      };
+      
+      pkgs = nixpkgs.legacyPackages.${system};
+      
+    in {
+      # Inherit packages from dream2nix
+      packages.${system} = dream2nixOutputs.packages.${system} or {};
+      
+      # Custom dev shell with node_modules from Nix store
+      devShells.${system}.default = pkgs.mkShell {
+        name = "heartquest-dev";
         
-        # Core development tools
-        coreTools = [
-          nodejs
+        buildInputs = [
+          pkgs.nodejs_20
           pkgs.git
-          pkgs.watchman  # Better file watching for React Native
-        ];
-
-        # Additional useful tools
-        extraTools = [
-          pkgs.bash
+          pkgs.watchman
           pkgs.curl
-          pkgs.wget
         ];
-
-      in {
-        # Development shell - pure, isolated environment
-        devShells.default = pkgs.mkShell {
-          name = "heartquest-dev";
+        
+        shellHook = ''
+          echo "🎮 HeartQuest - Pure Nix Environment"
+          echo "===================================="
+          echo "Node: $(node --version)"
+          echo ""
           
-          buildInputs = coreTools ++ extraTools;
-
-          # Environment variables
-          shellHook = ''
-            echo "🎮 HeartQuest Development Environment"
-            echo "====================================="
-            echo "Node: $(node --version)"
-            echo "npm:  $(npm --version)"
-            echo ""
-            echo "Commands:"
-            echo "  npm install    - Install dependencies"
-            echo "  npx expo start - Start dev server"
-            echo "  npx expo start --tunnel - Start with tunnel (for phone)"
-            echo ""
-            
-            # Auto-install dependencies if node_modules doesn't exist
-            if [ ! -d "node_modules" ]; then
-              echo "📦 Installing dependencies..."
-              npm install
-            fi
-          '';
-        };
-
-        # For building a production Android APK
-        devShells.build = pkgs.mkShell {
-          name = "heartquest-build";
+          # Use node_modules from Nix store if built
+          if [ -n "${dream2nixOutputs.packages.${system}.heartquest or ""}" ]; then
+            echo "✅ node_modules available from Nix store"
+          else
+            echo "⚠️  Run 'nix build' to build node_modules into Nix store"
+            echo "   Or run 'npm install' for local development"
+          fi
           
-          buildInputs = coreTools ++ [
-            pkgs.jdk17          # For Android builds
-            pkgs.gradle         # Build system
-          ];
-
-          shellHook = ''
-            echo "🏗️ HeartQuest Build Environment"
-            echo "==============================="
-            echo "Node: $(node --version)"
-            echo "Java: $(java --version | head -1)"
-            echo ""
-            echo "To build Android APK:"
-            echo "  eas build --platform android --local"
-            echo ""
-          '';
-        };
-
-        # Packages for easy access
-        packages.default = pkgs.symlinkJoin {
-          name = "heartquest-env";
-          paths = coreTools;
-        };
-      }
-    );
+          echo ""
+          echo "Commands:"
+          echo "  npx expo start --web  - Start in browser"
+          echo "  npx expo start        - Start dev server"
+          echo "  nix build             - Build all to Nix store"
+          echo ""
+        '';
+      };
+    };
 }
