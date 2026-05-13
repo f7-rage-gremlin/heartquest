@@ -1,118 +1,117 @@
 # HeartQuest Setup Guide
 
-## Quick Start
+## 🏠 Nix/NixOS Setup (Recommended for purity)
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/f7-rage-gremlin/heartquest.git
-   cd heartquest
-   ```
+If you're on NixOS or have Nix installed, you get a completely isolated, reproducible development environment:
 
-2. **Install dependencies**
+### Option A: Using `nix develop` (one-time command)
+
+```bash
+# Enter the pure Nix dev shell
+nix develop
+
+# Dependencies auto-install on first run
+# Then start the app:
+npx expo start --tunnel
+```
+
+### Option B: Using `direnv` (automatic loading)
+
+```bash
+# Install direnv (if not already)
+nix profile install nixpkgs#direnv
+
+# Add direnv to your shell (add to your shellrc)
+eval "$(direnv hook bash)"  # or zsh/fish
+
+# Allow the .envrc
+direnv allow
+
+# Now whenever you cd into this directory, 
+# the environment loads automatically!
+```
+
+---
+
+## 📱 Quick Start (Any System)
+
+1. **Enter dev environment**
    ```bash
+   # Nix users:
+   nix develop
+   
+   # Or without Nix:
    npm install
    ```
 
-3. **Start the dev server**
+2. **Start the dev server**
    ```bash
-   npx expo start
+   npx expo start --tunnel
    ```
 
-4. **Run on your device**
-   - Install **Expo Go** on your phone
-   - Scan the QR code from the terminal
+3. **Run on your phone**
+   - Install **Expo Go** from Play Store
+   - Scan the QR code in the app
+   - Play!
 
 ---
 
-## Supabase Setup (Optional - for persistence)
+## 🔧 Building for Production
 
-### 1. Create a Supabase project
-
-1. Go to [supabase.com](https://supabase.com)
-2. Create a new project
-3. Wait for the project to be ready
-
-### 2. Run the database schema
-
-1. Go to **SQL Editor** in your Supabase dashboard
-2. Copy the contents of `supabase/schema.sql`
-3. Paste and run it
-
-### 3. Get your credentials
-
-1. Go to **Settings > API**
-2. Copy your **Project URL** and **anon public key**
-
-### 4. Create `.env` file
-
-Create a `.env` file in the project root:
-
-```
-EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
-
-### 5. Restart the dev server
+### Android APK (for Play Store)
 
 ```bash
-npx expo start
-```
+# Enter build environment (has JDK + Gradle)
+nix develop .#build
 
----
-
-## Project Structure
-
-```
-heartquest/
-├── src/
-│   ├── screens/        # App screens
-│   │   ├── WelcomeScreen.tsx   # Onboarding
-│   │   ├── MapScreen.tsx       # Main game view
-│   │   ├── CombatScreen.tsx    # Battle arena
-│   │   ├── InventoryScreen.tsx # Item management
-│   │   ├── ProfileScreen.tsx   # Player stats
-│   │   └── ItemDetailScreen.tsx
-│   ├── store/          # Zustand state management
-│   ├── constants/      # Game data
-│   │   ├── items.ts    # 30+ items
-│   │   ├── monsters.ts # 15+ monsters
-│   │   └── theme.ts    # Colors, gradients
-│   ├── types/          # TypeScript types
-│   └── utils/          # Supabase, helpers
-├── supabase/
-│   └── schema.sql      # Database setup
-└── PLAN.md             # Development roadmap
-```
-
----
-
-## Game Features
-
-- 🗺️ **GPS-based exploration** - Walk around to find monsters
-- ⚔️ **Combat system** - Turn-based battles with critical hits
-- 👥 **Rival system** - Meet other players, choose friendly/hostile
-- 🎭 **Cloak of Deception** - Rare item to hide your true intentions
-- 🎒 **30+ items** - Weapons, armor, accessories, consumables
-- 👾 **15+ monsters** - From common to legendary bosses
-- 💖 **Founder rewards** - Early access bonuses
-
----
-
-## Build for Android
-
-```bash
 # Install EAS CLI
 npm install -g eas-cli
 
-# Login to Expo
-eas login
-
-# Build APK
-eas build --platform android --profile preview
+# Build
+eas build --platform android --local
 ```
 
 ---
 
-## License
+## 🗄️ Backend Setup (Optional - Cloud Save)
 
-MIT
+HeartQuest works offline first, but you can enable cloud saves with Supabase:
+
+1. Create a free project at [supabase.com](https://supabase.com)
+2. Run the SQL schema in `supabase/schema.sql`
+3. Copy `.env.example` to `.env.local`
+4. Add your Supabase URL and anon key
+
+---
+
+## 🎮 Game Features
+
+- ⚔️ Combat system with 10+ unique monsters
+- 🎯 30+ items including legendary gear
+- 🗺️ GPS-based exploration
+- 💬 Rival system for PvP dating
+- 👤 Profile with customizable bio
+- 📱 Works offline first
+
+---
+
+## 🧹 Clean Uninstall
+
+On NixOS, nothing touches your system. To remove completely:
+
+```bash
+rm -rf ~/projects/heartQuest/heartquest
+# That's it! No global packages, no leftover files.
+```
+
+---
+
+## Tech Stack
+
+- **Frontend:** Expo (React Native) + TypeScript
+- **State:** Zustand (local) + Supabase (cloud)
+- **Theme:** Sci-fi fantasy + cyberpunk + Adventure Time vibes
+
+---
+
+Made with ❤️ for the shelf dwellers
