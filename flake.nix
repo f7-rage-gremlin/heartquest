@@ -19,7 +19,6 @@
         # Core development tools
         coreTools = [
           nodejs
-          nodejs.pkgs.npm
           pkgs.git
           pkgs.watchman  # Better file watching for React Native
         ];
