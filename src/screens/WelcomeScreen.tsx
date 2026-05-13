@@ -90,13 +90,10 @@ export default function WelcomeScreen({ onComplete }: { onComplete: () => void }
     
     // Create player
     const playerId = 'player_' + Date.now();
-    initPlayer(playerId, playerName.trim());
+    initPlayer(playerId, playerName.trim(), selectedWeapon);
     
     // Give starter weapon
-    setTimeout(() => {
-      addItem(selectedWeapon, 1);
-      onComplete();
-    }, 100);
+    onComplete();
   };
   
   const TUTORIAL_STEPS = [

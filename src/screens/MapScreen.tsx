@@ -29,17 +29,9 @@ type Navigation = NativeStackNavigationProp<RootStackParamList>;
 export default function MapScreen() {
   const navigation = useNavigation<Navigation>();
   const player = usePlayerStore(state => state.player);
-  const initPlayer = usePlayerStore(state => state.initPlayer);
   const startCombat = useGameStore(state => state.startCombat);
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [nearbyMonsters, setNearbyMonsters] = useState<typeof MONSTERS[string][]>([]);
-  
-  // Initialize player if new
-  useEffect(() => {
-    if (!player) {
-      initPlayer('player_' + Date.now(), 'Adventurer');
-    }
-  }, [player, initPlayer]);
   
   // Get location
   useEffect(() => {

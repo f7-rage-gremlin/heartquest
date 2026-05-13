@@ -2,8 +2,9 @@
 // HeartQuest App - Main Entry Point
 // ============================================
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -15,6 +16,7 @@ import InventoryScreen from './screens/InventoryScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ItemDetailScreen from './screens/ItemDetailScreen';
 import { COLORS } from './constants/theme';
+import { usePlayerStore } from './store';
 
 export type RootStackParamList = {
   Map: undefined;
@@ -26,9 +28,44 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+// Loading screen while hydrating
+function LoadingScreen() {
+  return (
+    <View style={{ flex: 1, backgroundColor: COLORS.background, justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={{ fontSize: 48, marginBottom: 20 }}>⚔️</Text>
+      <ActivityIndicator size="large" color={COLORS.primary} />
+      <Text style={{ color: COLORS.textSecondary, marginTop: 16 }}>Loading HeartQuest...</Text>
+    </View>
+  );
+}
+
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [isNewPlayer, setIsNewPlayer] = useState(true);
   
+  const player = usePlayerStore((state) => state.player);
+  const hasHydrated = usePlayerStore((state) => state._hasHydrated);
+  const setHasHydrated = usePlayerStore((state) => state.setHasHydrated);
+  
+  useEffect(() => {
+    // Wait for hydration to complete
+    if (hasHydrated) {
+      setIsLoading(false);
+      setIsNewPlayer(!player);
+    }
+  }, [hasHydrated, player]);
+  
+  // Show loading until hydrated
+  if (isLoading) {
+    return (
+      <SafeAreaProvider>
+        <StatusBar style="light" />
+        <LoadingScreen />
+      </SafeAreaProvider>
+    );
+  }
+  
+  // Show welcome for new players
   if (isNewPlayer) {
     return (
       <SafeAreaProvider>
@@ -38,6 +75,7 @@ export default function App() {
     );
   }
   
+  // Main app
   return (
     <SafeAreaProvider>
       <NavigationContainer>
