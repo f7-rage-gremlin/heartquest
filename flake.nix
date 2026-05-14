@@ -11,10 +11,10 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         
-        # Node.js version compatible with Expo SDK 54
+        # Node.js for Vite/Capacitor
         nodejs = pkgs.nodejs_20;
         
-        # Android SDK packages
+        # Android SDK for APK builds
         androidComposition = pkgs.androidenv.composePackages {
           platformTools = true;
           buildTools = [ "35.0.0" ];
@@ -27,11 +27,10 @@
         # JDK for Android builds
         jdk = pkgs.jdk17;
         
-        # Core tools for development
+        # Core tools
         coreTools = [
           nodejs
           pkgs.git
-          pkgs.watchman
         ];
         
         # Android build tools
@@ -42,34 +41,32 @@
         ];
       in
       {
-        # Development shell - pure, isolated environment
         devShells.default = pkgs.mkShell {
           buildInputs = coreTools ++ androidTools;
           
-          # Android SDK paths
           ANDROID_HOME = "${androidComposition.androidsdk}/libexec/android-sdk";
           ANDROID_SDK_ROOT = "${androidComposition.androidsdk}/libexec/android-sdk";
           JAVA_HOME = "${jdk}";
           
           shellHook = ''
             echo ""
-            echo "🎮 HeartQuest Development Environment"
-            echo "====================================="
+            echo "🎮 HeartQuest Development Environment (Capacitor)"
+            echo "================================================="
             echo ""
             echo "Node: $(node --version)"
             echo "NPM:  $(npm --version)"
             echo "Java: $(java --version 2>&1 | head -1)"
             echo ""
             echo "Commands:"
-            echo "  npm install            - Install dependencies to ./node_modules"
-            echo "  npx expo start --web   - Run web version"
-            echo "  npx expo start         - Run with Expo Go (scan QR)"
-            echo "  npx expo run:android   - Build and run on device/emulator"
+            echo "  npm start              - Run web dev server"
+            echo "  npm run build          - Build for production"
+            echo "  npx cap add android    - Add Android platform"
+            echo "  npx cap sync android   - Sync to Android"
+            echo "  npx cap open android   - Open in Android Studio"
             echo ""
-            echo "📱 To build APK for phone:"
-            echo "  1. Connect phone with USB debugging enabled"
-            echo "  2. Run: npx expo run:android"
-            echo "  Or for emulator: npx expo run:android --device emulator-5554"
+            echo "📱 To build APK:"
+            echo "  cd android && ./gradlew assembleRelease"
+            echo "  APK: android/app/build/outputs/apk/release/"
             echo ""
           '';
         };
