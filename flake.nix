@@ -14,59 +14,38 @@
         # Node.js for Vite/Capacitor
         nodejs = pkgs.nodejs_20;
         
-        # Android SDK for APK builds
-        androidComposition = pkgs.androidenv.composePackages {
-          platformTools = true;
-          buildTools = [ "35.0.0" ];
-          platforms = [ "35" ];
-          cmdlineTools = "latest";
-          emulator = true;
-          ndk = "latest";
-        };
-        
-        # JDK for Android builds
-        jdk = pkgs.jdk17;
-        
         # Core tools
         coreTools = [
           nodejs
           pkgs.git
-        ];
-        
-        # Android build tools
-        androidTools = [
-          androidComposition.androidsdk
-          jdk
-          pkgs.gradle
+          pkgs.nodePackages.npm
         ];
       in
       {
         devShells.default = pkgs.mkShell {
-          buildInputs = coreTools ++ androidTools;
-          
-          ANDROID_HOME = "${androidComposition.androidsdk}/libexec/android-sdk";
-          ANDROID_SDK_ROOT = "${androidComposition.androidsdk}/libexec/android-sdk";
-          JAVA_HOME = "${jdk}";
+          buildInputs = coreTools;
           
           shellHook = ''
             echo ""
-            echo "🎮 HeartQuest Development Environment (Capacitor)"
-            echo "================================================="
+            echo "🎮 HeartQuest Development Environment"
+            echo "====================================="
             echo ""
             echo "Node: $(node --version)"
             echo "NPM:  $(npm --version)"
-            echo "Java: $(java --version 2>&1 | head -1)"
             echo ""
             echo "Commands:"
-            echo "  npm start              - Run web dev server"
-            echo "  npm run build          - Build for production"
-            echo "  npx cap add android    - Add Android platform"
-            echo "  npx cap sync android   - Sync to Android"
-            echo "  npx cap open android   - Open in Android Studio"
+            echo "  npm install   - Install dependencies"
+            echo "  npm run dev   - Start web dev server"
+            echo "  npm run build - Build for production"
             echo ""
-            echo "📱 To build APK:"
-            echo "  cd android && ./gradlew assembleRelease"
-            echo "  APK: android/app/build/outputs/apk/release/"
+            echo "📱 For Android APK:"
+            echo "  npm run build"
+            echo "  npx cap add android"
+            echo "  npx cap sync android"
+            echo "  npx cap open android  # Opens Android Studio"
+            echo ""
+            echo "  Then build APK from Android Studio or:"
+            echo "  cd android && ./gradlew assembleDebug"
             echo ""
           '';
         };
