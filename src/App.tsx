@@ -12,14 +12,14 @@ import './styles/global.css';
 export default function App() {
   const [isHydrated, setIsHydrated] = useState(false);
   const player = usePlayerStore((state) => state.player);
+  const hasHydrated = usePlayerStore((state) => state._hasHydrated);
 
   // Wait for zustand persist to hydrate
   useEffect(() => {
-    const unsubscribe = usePlayerStore.persist.onFinishHydration(() => {
+    if (hasHydrated) {
       setIsHydrated(true);
-    });
-    return unsubscribe;
-  }, []);
+    }
+  }, [hasHydrated]);
 
   if (!isHydrated) {
     return (

@@ -4,20 +4,36 @@
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Player, Monster, CombatState, SpawnPoint, RivalRelationship } from '../types';
 import { getItemById } from '../constants/items';
 
-// Custom storage adapter for React Native
+// Universal storage adapter - works on web AND native
 const storage = {
   getItem: async (name: string): Promise<string | null> => {
-    return await AsyncStorage.getItem(name) ?? null;
+    // Try AsyncStorage first (native), fall back to localStorage (web)
+    try {
+      const AsyncStorage = await import('@react-native-async-storage/async-storage');
+      return await AsyncStorage.default.getItem(name) ?? null;
+    } catch {
+      // Web fallback
+      return localStorage.getItem(name);
+    }
   },
   setItem: async (name: string, value: string): Promise<void> => {
-    await AsyncStorage.setItem(name, value);
+    try {
+      const AsyncStorage = await import('@react-native-async-storage/async-storage');
+      await AsyncStorage.default.setItem(name, value);
+    } catch {
+      localStorage.setItem(name, value);
+    }
   },
   removeItem: async (name: string): Promise<void> => {
-    await AsyncStorage.removeItem(name);
+    try {
+      const AsyncStorage = await import('@react-native-async-storage/async-storage');
+      await AsyncStorage.default.removeItem(name);
+    } catch {
+      localStorage.removeItem(name);
+    }
   },
 };
 
