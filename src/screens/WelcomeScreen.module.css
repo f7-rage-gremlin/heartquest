@@ -1,0 +1,192 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.backgroundGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
+  opacity: 0.3;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: var(--spacing-xl);
+  max-width: 400px;
+  width: 100%;
+}
+
+.step {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.logo {
+  font-size: 80px;
+  margin-bottom: var(--spacing-lg);
+  animation: float 3s ease-in-out infinite;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: var(--spacing-md);
+  letter-spacing: -1px;
+}
+
+.titleGlow {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: var(--spacing-sm);
+}
+
+.tagline {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  margin-bottom: var(--spacing-xl);
+}
+
+.startButton {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-muted));
+  color: white;
+  border: none;
+  padding: var(--spacing-lg) var(--spacing-xxl);
+  border-radius: var(--radius-lg);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.startButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 30px rgba(139, 92, 246, 0.5);
+}
+
+.stepTitle {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: var(--spacing-sm);
+}
+
+.stepDesc {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  margin-bottom: var(--spacing-xl);
+}
+
+.nameInput {
+  width: 100%;
+  background: var(--color-surface);
+  border: 2px solid var(--color-surface-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  font-size: 20px;
+  color: var(--color-text-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.nameInput:focus {
+  border-color: var(--color-primary);
+}
+
+.charCount {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.continueButton {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-muted));
+  color: white;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-xxl);
+  border-radius: var(--radius-lg);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.continueButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.continueButton:not(:disabled):hover {
+  transform: scale(1.02);
+}
+
+.weaponGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.weaponCard {
+  background: var(--color-surface);
+  border: 2px solid var(--color-surface-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.weaponCard:hover {
+  border-color: var(--color-primary);
+}
+
+.weaponCard.selected {
+  border-color: var(--color-primary);
+  background: rgba(139, 92, 246, 0.2);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.weaponIcon {
+  font-size: 40px;
+}
+
+.weaponName {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.weaponRarity {
+  color: var(--color-uncommon);
+  font-size: 11px;
+  text-transform: uppercase;
+}

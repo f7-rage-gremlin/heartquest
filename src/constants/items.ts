@@ -280,6 +280,46 @@ export const ITEMS: Record<string, Item> = {
   },
 };
 
+// Starter weapons for new players
+export const STARTER_WEAPONS: Item[] = [
+  {
+    id: 'starter_blade',
+    name: 'Chrono Blade',
+    description: 'A blade forged from crystallized time. Strong and reliable.',
+    rarity: 'common',
+    icon: '⚔️',
+    type: 'weapon',
+    stats: { attack: 5 },
+  },
+  {
+    id: 'staff_plasma',
+    name: 'Plasma Staff',
+    description: 'Channels raw energy into devastating blasts.',
+    rarity: 'common',
+    icon: '🪄',
+    type: 'weapon',
+    stats: { magic: 5, attack: 2 },
+  },
+  {
+    id: 'gun_void',
+    name: 'Void Pistol',
+    description: 'Fires bolts of compressed void energy. Gamer reflexes, but real.',
+    rarity: 'uncommon',
+    icon: '🔫',
+    type: 'weapon',
+    stats: { attack: 7, speed: 3 },
+  },
+  {
+    id: 'cyber_claw',
+    name: 'Cyber Claw',
+    description: 'Augmented gauntlet with retractable plasma claws.',
+    rarity: 'common',
+    icon: '🦾',
+    type: 'weapon',
+    stats: { attack: 4, defense: 2 },
+  },
+];
+
 export const getItemById = (id: string): Item | undefined => ITEMS[id];
 export const getItemsByRarity = (rarity: Item['rarity']): Item[] => 
   Object.values(ITEMS).filter(item => item.rarity === rarity);

@@ -1,0 +1,186 @@
+/* HeartQuest Global Styles - Sci-Fi Fantasy Theme */
+
+:root {
+  --color-background: #0F0F1A;
+  --color-surface: #1A1A2E;
+  --color-surface-light: #2A2A4E;
+  --color-primary: #8B5CF6;
+  --color-primary-muted: #6D28D9;
+  --color-secondary: #06B6D4;
+  --color-accent: #F59E0B;
+  --color-xp: #10B981;
+  --color-health: #EF4444;
+  --color-mana: #3B82F6;
+  --color-heal: #22C55E;
+  --color-text-primary: #F5F5F5;
+  --color-text-secondary: #9CA3AF;
+  --color-text-muted: #6B7280;
+  
+  --color-common: #9CA3AF;
+  --color-uncommon: #22C55E;
+  --color-rare: #3B82F6;
+  --color-epic: #A855F7;
+  --color-legendary: #F59E0B;
+  --color-mythic: #EC4899;
+  
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.app-container {
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-background);
+  overflow: hidden;
+  position: relative;
+}
+
+.app-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background);
+  color: var(--color-primary);
+  font-size: 18px;
+}
+
+/* Buttons */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-muted));
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+}
+
+.btn-secondary {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.btn-danger {
+  background-color: var(--color-health);
+  color: white;
+}
+
+.btn-success {
+  background-color: var(--color-heal);
+  color: white;
+}
+
+/* Cards */
+.card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-surface-light);
+}
+
+.card-common { border-color: var(--color-common); }
+.card-uncommon { border-color: var(--color-uncommon); }
+.card-rare { border-color: var(--color-rare); }
+.card-epic { border-color: var(--color-epic); }
+.card-legendary { border-color: var(--color-legendary); }
+.card-mythic { border-color: var(--color-mythic); }
+
+/* Text */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-muted); }
+.text-center { text-align: center; }
+.text-bold { font-weight: 600; }
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px currentColor; }
+  50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
+.animate-glow { animation: glow 2s ease-in-out infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-light);
+  border-radius: var(--radius-full);
+}
+
+/* Safe area for mobile */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .app-container {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}

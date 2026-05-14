@@ -1,0 +1,94 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+  padding: var(--spacing-xl);
+  padding-top: calc(var(--spacing-xl) + env(safe-area-inset-top, 0));
+}
+
+.title {
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.arena {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.combatant {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.icon {
+  font-size: 48px;
+}
+
+.vs {
+  font-size: 24px;
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+.hpBar {
+  width: 100px;
+  height: 12px;
+  background: var(--color-surface);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.hpFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-health), #F97316);
+  transition: width 0.3s ease;
+}
+
+.hpFill.enemy {
+  background: linear-gradient(90deg, #DC2626, #991B1B);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.actionBtn {
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 2px solid var(--color-surface-light);
+  color: var(--color-text-primary);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionBtn:hover {
+  border-color: var(--color-primary);
+  transform: scale(1.02);
+}
+
+.log {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.log p {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  margin-bottom: var(--spacing-xs);
+}

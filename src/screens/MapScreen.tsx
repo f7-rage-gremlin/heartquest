@@ -1,322 +1,126 @@
-// ============================================
-// HeartQuest Map Screen - Main Game View
-// ============================================
-
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  Animated,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import * as Location from 'expo-location';
-
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePlayerStore, useGameStore } from '../store';
-import { COLORS, SPACING, RADIUS, getRarityColor } from '../constants/theme';
 import { MONSTERS, getMonsterById } from '../constants/monsters';
-import { RootStackParamList } from '../App';
-
-const { width, height } = Dimensions.get('window');
-
-type Navigation = NativeStackNavigationProp<RootStackParamList>;
+import styles from './MapScreen.module.css';
 
 export default function MapScreen() {
-  const navigation = useNavigation<Navigation>();
+  const navigate = useNavigate();
   const player = usePlayerStore(state => state.player);
   const startCombat = useGameStore(state => state.startCombat);
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [nearbyMonsters, setNearbyMonsters] = useState<typeof MONSTERS[string][]>([]);
   
-  // Get location
   useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.log('Location permission denied');
-        return;
-      }
-      
-      const location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      
-      // Simulate nearby monsters (in real app, this would be from server)
-      const randomMonsters = Object.values(MONSTERS)
-        .filter(m => m.type !== 'boss')
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 5);
-      setNearbyMonsters(randomMonsters);
-    })();
+    // Try to get location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => console.log('Location permission denied')
+      );
+    }
+    
+    // Simulate nearby monsters
+    const randomMonsters = Object.values(MONSTERS)
+      .filter(m => m.type !== 'boss')
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 5);
+    setNearbyMonsters(randomMonsters);
   }, []);
   
   if (!player) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
+    return <div className={styles.loading}>Loading...</div>;
   }
   
   const handleCombat = (monsterId: string) => {
     const monster = getMonsterById(monsterId);
     if (monster) {
       startCombat(monster);
-      navigation.navigate('Combat', { monsterId });
+      navigate('/combat');
     }
   };
   
+  const xpPercent = (player.xp / player.xpToNextLevel) * 100;
+  
   return (
-    <View style={styles.container}>
-      {/* Background */}
-      <View style={styles.backgroundOverlay} />
-      
+    <div className={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.playerInfo}>
-          <Text style={styles.avatar}>{player.avatar}</Text>
-          <View>
-            <Text style={styles.playerName}>{player.displayName}</Text>
-            <Text style={styles.playerLevel}>Lv. {player.level}</Text>
-          </View>
-        </View>
-        <View style={styles.stats}>
-          <View style={styles.statItem}>
-            <Text style={styles.statIcon}>💰</Text>
-            <Text style={styles.statValue}>{player.gold}</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statIcon}>💎</Text>
-            <Text style={styles.statValue}>{player.gems}</Text>
-          </View>
-        </View>
-      </View>
+      <div className={styles.header}>
+        <div className={styles.playerInfo}>
+          <span className={styles.avatar}>{player.avatar}</span>
+          <div>
+            <div className={styles.playerName}>{player.displayName}</div>
+            <div className={styles.playerLevel}>Lv. {player.level}</div>
+          </div>
+        </div>
+        <div className={styles.stats}>
+          <div className={styles.statItem}>
+            <span>💰</span>
+            <span>{player.gold}</span>
+          </div>
+          <div className={styles.statItem}>
+            <span>💎</span>
+            <span>{player.gems}</span>
+          </div>
+        </div>
+      </div>
       
       {/* XP Bar */}
-      <View style={styles.xpContainer}>
-        <View style={styles.xpBar}>
-          <View style={[styles.xpFill, { width: `${(player.xp / player.xpToNextLevel) * 100}%` }]} />
-        </View>
-        <Text style={styles.xpText}>{player.xp} / {player.xpToNextLevel} XP</Text>
-      </View>
+      <div className={styles.xpContainer}>
+        <div className={styles.xpBar}>
+          <div className={styles.xpFill} style={{ width: `${xpPercent}%` }} />
+        </div>
+        <div className={styles.xpText}>{player.xp} / {player.xpToNextLevel} XP</div>
+      </div>
       
-      {/* Map Area (placeholder for now) */}
-      <View style={styles.mapArea}>
-        <View style={styles.mapPlaceholder}>
-          <Text style={styles.mapEmoji}>🗺️</Text>
-          <Text style={styles.mapText}>Location: {location ? `${location.coords.latitude.toFixed(4)}, ${location.coords.longitude.toFixed(4)}` : 'Unknown'}</Text>
-        </View>
-      </View>
+      {/* Map Area */}
+      <div className={styles.mapArea}>
+        <div className={styles.mapPlaceholder}>
+          <span className={styles.mapEmoji}>🗺️</span>
+          <span className={styles.mapText}>
+            Location: {location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : 'Unknown'}
+          </span>
+        </div>
+      </div>
       
       {/* Nearby Monsters */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>⚔️ Nearby Monsters</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.monsterList}>
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>⚔️ Nearby Monsters</h3>
+        <div className={styles.monsterList}>
           {nearbyMonsters.map(monster => (
-            <TouchableOpacity
+            <button
               key={monster.id}
-              style={[styles.monsterCard, { borderColor: getRarityColor(monster.type === 'rare' ? 'rare' : monster.type === 'boss' ? 'legendary' : 'common') }]}
-              onPress={() => handleCombat(monster.id)}
+              className={`${styles.monsterCard} ${styles[`rarity-${monster.type}`]}`}
+              onClick={() => handleCombat(monster.id)}
             >
-              <Text style={styles.monsterIcon}>{monster.icon}</Text>
-              <Text style={styles.monsterName}>{monster.name}</Text>
-              <Text style={styles.monsterLevel}>Lv. {monster.level}</Text>
-              <Text style={[styles.monsterType, { color: getRarityColor(monster.type === 'rare' ? 'rare' : monster.type === 'boss' ? 'legendary' : 'common') }]}>
-                {monster.type.toUpperCase()}
-              </Text>
-            </TouchableOpacity>
+              <span className={styles.monsterIcon}>{monster.icon}</span>
+              <span className={styles.monsterName}>{monster.name}</span>
+              <span className={styles.monsterLevel}>Lv. {monster.level}</span>
+              <span className={styles.monsterType}>{monster.type.toUpperCase()}</span>
+            </button>
           ))}
-        </ScrollView>
-      </View>
+        </div>
+      </div>
       
       {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Inventory')}>
-          <Text style={styles.navIcon}>🎒</Text>
-          <Text style={styles.navLabel}>Inventory</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profile')}>
-          <Text style={styles.navIcon}>👤</Text>
-          <Text style={styles.navLabel}>Profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>⚔️</Text>
-          <Text style={styles.navLabel}>Rivals</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>💬</Text>
-          <Text style={styles.navLabel}>Chat</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      <nav className={styles.bottomNav}>
+        <button className={styles.navItem} onClick={() => navigate('/inventory')}>
+          <span className={styles.navIcon}>🎒</span>
+          <span className={styles.navLabel}>Inventory</span>
+        </button>
+        <button className={styles.navItem} onClick={() => navigate('/profile')}>
+          <span className={styles.navIcon}>👤</span>
+          <span className={styles.navLabel}>Profile</span>
+        </button>
+        <button className={styles.navItem}>
+          <span className={styles.navIcon}>⚔️</span>
+          <span className={styles.navLabel}>Rivals</span>
+        </button>
+        <button className={styles.navItem}>
+          <span className={styles.navIcon}>💬</span>
+          <span className={styles.navLabel}>Chat</span>
+        </button>
+      </nav>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  backgroundOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: COLORS.primary,
-    opacity: 0.05,
-  },
-  loadingText: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    textAlign: 'center',
-    marginTop: 100,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.xl,
-    paddingBottom: SPACING.md,
-  },
-  playerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.sm,
-  },
-  avatar: {
-    fontSize: 40,
-  },
-  playerName: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  playerLevel: {
-    color: COLORS.secondary,
-    fontSize: 14,
-  },
-  stats: {
-    flexDirection: 'row',
-    gap: SPACING.md,
-  },
-  statItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.xs,
-  },
-  statIcon: {
-    fontSize: 16,
-  },
-  statValue: {
-    color: COLORS.textPrimary,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  xpContainer: {
-    paddingHorizontal: SPACING.lg,
-    marginBottom: SPACING.md,
-  },
-  xpBar: {
-    height: 8,
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.full,
-    overflow: 'hidden',
-  },
-  xpFill: {
-    height: '100%',
-    backgroundColor: COLORS.xp,
-    borderRadius: RADIUS.full,
-  },
-  xpText: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    marginTop: SPACING.xs,
-    textAlign: 'center',
-  },
-  mapArea: {
-    flex: 1,
-    marginHorizontal: SPACING.lg,
-    marginVertical: SPACING.md,
-    borderRadius: RADIUS.lg,
-    overflow: 'hidden',
-    backgroundColor: COLORS.surface,
-  },
-  mapPlaceholder: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  mapEmoji: {
-    fontSize: 64,
-  },
-  mapText: {
-    color: COLORS.textSecondary,
-    fontSize: 12,
-    marginTop: SPACING.sm,
-  },
-  section: {
-    paddingHorizontal: SPACING.lg,
-    marginBottom: SPACING.md,
-  },
-  sectionTitle: {
-    color: COLORS.textPrimary,
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: SPACING.sm,
-  },
-  monsterList: {
-    marginHorizontal: -SPACING.lg,
-    paddingHorizontal: SPACING.lg,
-  },
-  monsterCard: {
-    width: 120,
-    padding: SPACING.md,
-    marginRight: SPACING.sm,
-    borderRadius: RADIUS.lg,
-    backgroundColor: COLORS.surface,
-    borderWidth: 2,
-    alignItems: 'center',
-  },
-  monsterIcon: {
-    fontSize: 32,
-    marginBottom: SPACING.xs,
-  },
-  monsterName: {
-    color: COLORS.textPrimary,
-    fontSize: 12,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  monsterLevel: {
-    color: COLORS.textSecondary,
-    fontSize: 10,
-  },
-  monsterType: {
-    fontSize: 9,
-    fontWeight: 'bold',
-    marginTop: SPACING.xs,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.surface,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.surfaceLight,
-    paddingBottom: SPACING.lg,
-    paddingTop: SPACING.sm,
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: SPACING.sm,
-  },
-  navIcon: {
-    fontSize: 24,
-    marginBottom: SPACING.xs,
-  },
-  navLabel: {
-    color: COLORS.textSecondary,
-    fontSize: 10,
-  },
-});

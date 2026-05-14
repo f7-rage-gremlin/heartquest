@@ -1,0 +1,134 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  padding-top: calc(var(--spacing-lg) + env(safe-area-inset-top, 0));
+  border-bottom: 1px solid var(--color-surface);
+}
+
+.header h1 {
+  font-size: 20px;
+  color: var(--color-text-primary);
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  padding: var(--spacing-md);
+  background: var(--color-surface);
+}
+
+.statBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--color-text-primary);
+}
+
+.statLabel {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.itemList {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+}
+
+.itemCard {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  background: var(--color-surface);
+  border: 2px solid var(--color-surface-light);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.itemCard:hover {
+  transform: translateX(4px);
+}
+
+.rarity-common { border-color: var(--color-common); }
+.rarity-uncommon { border-color: var(--color-uncommon); }
+.rarity-rare { border-color: var(--color-rare); }
+.rarity-epic { border-color: var(--color-epic); }
+.rarity-legendary { border-color: var(--color-legendary); }
+.rarity-mythic { border-color: var(--color-mythic); }
+
+.itemIcon {
+  font-size: 28px;
+}
+
+.itemInfo {
+  flex: 1;
+  text-align: left;
+}
+
+.itemName {
+  display: block;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.itemType {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.quantity {
+  background: var(--color-surface-light);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-text-secondary);
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-md);
+}
+
+.emptyHint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-sm);
+}
