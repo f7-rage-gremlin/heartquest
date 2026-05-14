@@ -12,7 +12,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
         
         # Node.js for Vite/Capacitor (npm included)
-        nodejs = pkgs.nodejs_20;
+        nodejs = pkgs.nodejs_22;
         
         # Core tools
         coreTools = [

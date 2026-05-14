@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
+    "dev": "vite",
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
