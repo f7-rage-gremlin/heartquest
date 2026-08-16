@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HeartQuest — The AR dating RPG</title>
+  <meta name="description" content="HeartQuest is the AR dating RPG where love is the ultimate quest.">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0a1a;
+      --surface: rgba(255, 255, 255, .05);
+      --surface-strong: rgba(255, 255, 255, .08);
+      --muted: #9ca3af;
+      --violet: #a78bfa;
+      --pink: #f472b6;
+      --green: #86efac;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behaviour: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: #fff;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .page { overflow: hidden; }
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 1.5rem;
+      text-align: center;
+    }
+    .glow {
+      position: absolute;
+      width: 24rem;
+      height: 24rem;
+      border-radius: 999px;
+      filter: blur(4rem);
+      pointer-events: none;
+      opacity: .6;
+      animation: pulse 4s ease-in-out infinite;
+    }
+    .glow-one { top: 25%; left: 25%; background: rgba(147, 51, 234, .2); }
+    .glow-two { right: 25%; bottom: 25%; background: rgba(219, 39, 119, .2); animation-delay: 1s; }
+    .glow-three {
+      top: 50%;
+      left: 50%;
+      width: 37.5rem;
+      height: 37.5rem;
+      transform: translate(-50%, -50%);
+      background: rgba(124, 58, 237, .1);
+      animation: none;
+    }
+    .content { position: relative; z-index: 1; width: min(100%, 64rem); }
+    .notice {
+      display: inline-block;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border: 1px solid rgba(245, 158, 11, .3);
+      border-radius: .75rem;
+      background: linear-gradient(90deg, rgba(245, 158, 11, .2), rgba(249, 115, 22, .2));
+      color: #fcd34d;
+      font-weight: 700;
+    }
+    .logo { margin-bottom: 1.5rem; }
+    .logo-mark { margin-bottom: .5rem; font-size: 3.75rem; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      margin-bottom: .75rem;
+      font-size: clamp(3rem, 9vw, 5rem);
+      line-height: 1;
+      background: linear-gradient(90deg, var(--pink), var(--violet), #c084fc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .tagline { margin-bottom: 0; color: #c4b5fd; font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: 300; }
+    .intro { max-width: 42rem; margin: 0 auto 2.5rem; color: #d1d5db; font-size: clamp(1.05rem, 2vw, 1.25rem); }
+    .intro span { color: #c4b5fd; }
+    .pills { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-bottom: 3rem; }
+    .pill { padding: .5rem 1rem; border: 1px solid rgba(139, 92, 246, .3); border-radius: 999px; background: rgba(139, 92, 246, .1); color: #ddd6fe; font-size: .875rem; }
+    .signup { width: min(100%, 28rem); margin: 0 auto; }
+    .form { display: flex; flex-direction: column; gap: 1rem; }
+    input {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      border: 1px solid rgba(139, 92, 246, .3);
+      border-radius: .75rem;
+      outline: none;
+      background: rgba(255, 255, 255, .05);
+      color: #fff;
+      text-align: center;
+      font-size: 1.125rem;
+    }
+    input::placeholder { color: #6b7280; }
+    input:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, .2); }
+    .button {
+      width: 100%;
+      padding: 1rem 2rem;
+      border: 0;
+      border-radius: .75rem;
+      background: linear-gradient(90deg, #ec4899, #7c3aed);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.125rem;
+      box-shadow: 0 10px 30px rgba(124, 58, 237, .3);
+      transition: transform .2s, filter .2s;
+    }
+    .button:hover { filter: brightness(1.12); transform: scale(1.03); }
+    .button:active { transform: scale(.98); }
+    .success { padding: 2rem; border: 1px solid rgba(34, 197, 94, .3); border-radius: .75rem; background: rgba(34, 197, 94, .2); }
+    .success-icon { margin-bottom: .75rem; font-size: 2.25rem; }
+    .success-title { margin-bottom: .5rem; color: var(--green); font-size: 1.25rem; font-weight: 700; }
+    .success-copy { margin-bottom: 0; color: #9ca3af; }
+    .scroll { position: absolute; bottom: 2.5rem; color: var(--violet); font-size: 1.5rem; animation: bounce 1.5s infinite; }
+    .section { max-width: 64rem; margin: 0 auto; padding: 6rem 1.5rem; }
+    .section-wide { max-width: none; background: linear-gradient(180deg, transparent, rgba(76, 29, 149, .2), transparent); }
+    .section-wide > div { max-width: 64rem; margin: 0 auto; }
+    .section-title { margin-bottom: 1rem; text-align: center; font-size: clamp(2rem, 5vw, 2.5rem); }
+    .section-lead { max-width: 38rem; margin: 0 auto 4rem; color: var(--muted); text-align: center; }
+    .grid { display: grid; gap: 2rem; }
+    .grid-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-two { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+    .card { padding: 2rem; border: 1px solid rgba(255, 255, 255, .06); border-radius: 1rem; background: linear-gradient(135deg, rgba(139, 92, 246, .16), rgba(139, 92, 246, .03)); }
+    .card-icon { margin-bottom: 1.25rem; font-size: 3rem; }
+    .card h3 { margin-bottom: .75rem; font-size: 1.25rem; }
+    .card p { margin-bottom: 0; color: var(--muted); }
+    .mechanic { padding: 1.5rem; border: 1px solid rgba(255, 255, 255, .1); border-radius: .75rem; background: var(--surface); transition: border-color .2s; }
+    .mechanic:hover { border-color: rgba(139, 92, 246, .3); }
+    .mechanic h3 { margin-bottom: .5rem; color: #ddd6fe; font-size: 1.125rem; }
+    .mechanic p { margin-bottom: 0; color: var(--muted); font-size: .875rem; }
+    .comparison { display: flex; flex-direction: column; gap: 1rem; }
+    .comparison-row { display: flex; align-items: center; gap: 1rem; padding: 1.25rem; border: 1px solid rgba(255, 255, 255, .1); border-radius: .75rem; background: var(--surface); }
+    .old, .new { width: 50%; font-size: .875rem; }
+    .old { color: #6b7280; text-align: right; text-decoration: line-through; }
+    .new { color: #86efac; }
+    .arrow { color: var(--violet); font-weight: 700; }
+    .final-cta { padding-top: 8rem; padding-bottom: 8rem; text-align: center; }
+    .final-cta .signup { width: min(100%, 32rem); }
+    .final-form { display: flex; flex-direction: row; gap: 1rem; }
+    .final-form input { flex: 1; text-align: left; }
+    .final-form .button { width: auto; white-space: nowrap; }
+    footer { padding: 2.5rem 1.5rem; border-top: 1px solid rgba(255, 255, 255, .05); color: #4b5563; text-align: center; font-size: .875rem; }
+    footer p { margin: 0; }
+    footer p + p { margin-top: .5rem; }
+    @keyframes pulse { 0%, 100% { opacity: .45; transform: scale(1); } 50% { opacity: .75; transform: scale(1.05); } }
+    @keyframes bounce { 0%, 100% { transform: translateY(-15%); } 50% { transform: translateY(15%); } }
+    @media (max-width: 760px) {
+      .grid-three, .grid-two { grid-template-columns: 1fr; }
+      .comparison-row { flex-direction: column; align-items: stretch; gap: .5rem; }
+      .old, .new { width: 100%; text-align: left; }
+      .arrow { display: none; }
+      .final-form { flex-direction: column; }
+      .final-form .button { width: 100%; }
+      .glow-three { width: 28rem; height: 28rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="glow glow-one"></div>
+      <div class="glow glow-two"></div>
+      <div class="glow glow-three"></div>
+      <div class="content">
+        <div class="notice">🎁 Early supporters get exclusive Founder's Items — including the rare Dragon's Heart token!</div>
+        <div class="logo">
+          <div class="logo-mark">⚔️ 💕</div>
+          <h1>HeartQuest</h1>
+          <p class="tagline">The AR dating RPG where love is the ultimate quest</p>
+        </div>
+        <p class="intro">Walk the real world. Find real people. Complete quests together.<br><span>Your next great adventure isn't in a game — it's across the coffee shop.</span></p>
+        <div class="pills">
+          <span class="pill">✨ GPS-Based Matching</span>
+          <span class="pill">✨ AR World Exploration</span>
+          <span class="pill">✨ Co-op RPG Quests</span>
+          <span class="pill">✨ Real Meetups Rewarded</span>
+          <span class="pill">✨ 100% Free to Play</span>
+        </div>
+        <div class="signup" data-signup="hero"></div>
+      </div>
+      <div class="scroll">↓</div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-lead">Leave the algorithm behind. Your phone becomes a compass, your city becomes the dating pool.</p>
+      <div class="grid grid-three">
+        <article class="card"><div class="card-icon">📡</div><h3>Get Notified</h3><p>When someone who matches your preferences is within your discovery range, your phone buzzes. A real person. Real proximity. Real possibility.</p></article>
+        <article class="card"><div class="card-icon">🗺️</div><h3>Find Each Other</h3><p>Explore a shared AR world. Use clues, items, and collaboration to locate your match in the real world. The game starts before you meet.</p></article>
+        <article class="card"><div class="card-icon">🤝</div><h3>Quest Together</h3><p>Once you meet, combine items, complete co-op challenges, level up together, and unlock abilities. Real connection through shared adventure.</p></article>
+      </div>
+    </section>
+
+    <section class="section section-wide">
+      <div>
+        <h2 class="section-title">The Game</h2>
+        <p class="section-lead">Not just a dating app with a game skin. A real RPG where dating is the endgame.</p>
+        <div class="grid grid-two">
+          <article class="mechanic"><h3>⚔️ Monster Hunting</h3><p>Fight roaming monsters for XP, gold, and item drops. Every battle makes you stronger. No paying for power — only skill and time invested.</p></article>
+          <article class="mechanic"><h3>💰 Earn Items by Playing</h3><p>Gold, items, and rare loot are earned through gameplay. The longer you've played, the more powerful your gear. Veterans get detection advantages.</p></article>
+          <article class="mechanic"><h3>🏹 Proximity Notifications</h3><p>Get alerted when a match enters your zone. Set your range — from 100m to 5km. Upgrade your Antenna item to expand it.</p></article>
+          <article class="mechanic"><h3>🪞 Magic Mirror</h3><p>See your nearby match's photo before you meet. An item earned through gameplay that removes the guesswork while keeping the adventure.</p></article>
+          <article class="mechanic"><h3>👥 Team Up with Rivals</h3><p>Hostile to friendly in one tap. Team up with your rivals to fight tougher monsters together, then split the loot. Trust is earned.</p></article>
+          <article class="mechanic"><h3>🧥 Cloak of Deception</h3><p>A rare item that lets you appear friendly while remaining hostile. Use it wisely — other players can craft detection items to see through the veil.</p></article>
+          <article class="mechanic"><h3>⚔️ Fight Your Rivals</h3><p>Spot rivals within range based on your stats and items. Attack them for damage. Knock them out and you'll steal one of their items.</p></article>
+          <article class="mechanic"><h3>🔗 Mega Items</h3><p>Combine two items to forge a Mega Item with greater power. Only veterans have the components to craft these.</p></article>
+          <article class="mechanic"><h3>🎯 Ice Breaker Challenges</h3><p>Guess each other's answers, solve riddles together, complete fun tasks. Earn XP and unlock abilities for your duo.</p></article>
+          <article class="mechanic"><h3>💎 Legendary Items</h3><p>Only obtainable when two players meet and combine their finds. The rarer the encounter, the more powerful the item.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Why HeartQuest?</h2>
+      <p class="section-lead">Traditional apps are designed to keep you scrolling. HeartQuest is designed to get you <em>out the door</em>.</p>
+      <div class="comparison">
+        <div class="comparison-row"><div class="old">Swipe through hundreds of profiles</div><div class="arrow">→</div><div class="new">Walk around and discover real nearby people</div></div>
+        <div class="comparison-row"><div class="old">Chat for days with no payoff</div><div class="arrow">→</div><div class="new">Quest together from the moment you match</div></div>
+        <div class="comparison-row"><div class="old">Catfishing and fake photos</div><div class="arrow">→</div><div class="new">Proximity verification — they're really there</div></div>
+        <div class="comparison-row"><div class="old">Algorithm selects your matches</div><div class="arrow">→</div><div class="new">You explore and choose based on real presence</div></div>
+        <div class="comparison-row"><div class="old">Pay to win for better matches</div><div class="arrow">→</div><div class="new">Play longer = earn rarer detection items</div></div>
+        <div class="comparison-row"><div class="old">Burnout from endless scrolling</div><div class="arrow">→</div><div class="new">Get rewarded for going outside and meeting people</div></div>
+        <div class="comparison-row"><div class="old">Rivals stay rivals forever</div><div class="arrow">→</div><div class="new">Team up or fight — relationships evolve in the world</div></div>
+      </div>
+    </section>
+
+    <section class="section final-cta">
+      <h2 class="section-title">Your Quest Awaits</h2>
+      <p class="section-lead">Join the waitlist and be first to explore the world when we launch.</p>
+      <div class="signup" data-signup="final"></div>
+    </section>
+
+    <footer>
+      <p>⚔️ HeartQuest — Where player two becomes player one ❤️</p>
+      <p>Not affiliated with Pokémon GO or any third-party trademarks.</p>
+    </footer>
+  </main>
+
+  <script>
+    function renderSignup(container) {
+      container.innerHTML = '<form class="form final-form"><input type="email" placeholder="Enter your email for early access" aria-label="Email address" required><button class="button" type="submit">Join the Quest ⚔️</button></form>';
+      container.querySelector('form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        container.innerHTML = '<div class="success"><div class="success-icon">🎉</div><p class="success-title">You\'re on the list!</p><p class="success-copy">We\'ll notify you when HeartQuest launches. Your adventure begins soon.</p></div>';
+      });
+    }
+
+    document.querySelectorAll('[data-signup]').forEach(renderSignup);
+  </script>
+</body>
+</html>
