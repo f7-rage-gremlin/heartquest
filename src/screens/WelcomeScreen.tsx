@@ -9,11 +9,11 @@ type Step = 'welcome' | 'name' | 'starter' | 'ready';
 export default function WelcomeScreen({ onComplete }: { onComplete: () => void }) {
   const navigate = useNavigate();
   const initPlayer = usePlayerStore(state => state.initPlayer);
-  
+
   const [step, setStep] = useState<Step>('welcome');
   const [playerName, setPlayerName] = useState('');
   const [selectedWeapon, setSelectedWeapon] = useState<string | null>(null);
-  
+
   const handleStart = () => {
     if (step === 'welcome') {
       setStep('name');
@@ -21,17 +21,20 @@ export default function WelcomeScreen({ onComplete }: { onComplete: () => void }
       setStep('starter');
     } else if (step === 'starter' && selectedWeapon) {
       const playerId = 'player_' + Date.now();
-      initPlayer(playerId, playerName.trim());
-      onComplete();
-      navigate('/');
+      // Initialize player and navigate
+      initPlayer(playerId, playerName.trim(), selectedWeapon);
+      // Small delay to ensure state is saved
+      setTimeout(() => {
+        navigate('/');
+      }, 100);
     }
   };
-  
+
   return (
     <div className={styles.container}>
       {/* Background Effects */}
       <div className={styles.backgroundGlow} />
-      
+
       {/* Content */}
       <div className={styles.content}>
         {step === 'welcome' && (
@@ -51,7 +54,7 @@ export default function WelcomeScreen({ onComplete }: { onComplete: () => void }
             </button>
           </div>
         )}
-        
+
         {step === 'name' && (
           <div className={styles.step}>
             <h2 className={styles.stepTitle}>What shall they call you?</h2>
@@ -66,8 +69,8 @@ export default function WelcomeScreen({ onComplete }: { onComplete: () => void }
               autoFocus
             />
             <p className={styles.charCount}>{playerName.length}/20 characters</p>
-            <button 
-              className={styles.continueButton} 
+            <button
+              className={styles.continueButton}
               onClick={handleStart}
               disabled={playerName.trim().length < 2}
             >
@@ -75,7 +78,7 @@ export default function WelcomeScreen({ onComplete }: { onComplete: () => void }
             </button>
           </div>
         )}
-        
+
         {step === 'starter' && (
           <div className={styles.step}>
             <h2 className={styles.stepTitle}>Choose your weapon</h2>
@@ -93,8 +96,8 @@ export default function WelcomeScreen({ onComplete }: { onComplete: () => void }
                 </button>
               ))}
             </div>
-            <button 
-              className={styles.continueButton} 
+            <button
+              className={styles.continueButton}
               onClick={handleStart}
               disabled={!selectedWeapon}
             >

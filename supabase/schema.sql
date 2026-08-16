@@ -12,20 +12,20 @@ create extension if not exists "uuid-ossp";
 
 create table if not exists public.players (
   id uuid references auth.users(id) on delete cascade primary key,
-  
+
   -- Basic info
   display_name text not null default 'Adventurer',
   avatar text not null default '🧙',
-  
+
   -- Progression
   level integer not null default 1,
   xp integer not null default 0,
   xp_to_next_level integer not null default 100,
-  
+
   -- Currency
   gold integer not null default 50,
   gems integer not null default 0,
-  
+
   -- Stats (stored as JSONB)
   stats jsonb not null default '{
     "health": 100,
@@ -37,28 +37,33 @@ create table if not exists public.players (
     "charisma": 5,
     "detection": 10
   }'::jsonb,
-  
+
   -- Equipment (stored as JSONB)
   equipped_items jsonb not null default '{}'::jsonb,
-  
+
   -- Dating profile (optional)
   profile jsonb,
-  
+
   -- Location (optional)
   location jsonb,
-  
+
+  -- Location for proximity detection (separate columns for indexing)
+  latitude double precision,
+  longitude double precision,
+  location_updated_at timestamptz,
+
   -- Rival relationships
   rivals jsonb not null default '[]'::jsonb,
-  
+
   -- Stats
   monsters_killed integer not null default 0,
   players_defeated integer not null default 0,
   items_found integer not null default 0,
-  
+
   -- Founder status
   is_founder boolean not null default false,
   founder_tier text,
-  
+
   -- Timestamps
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -76,7 +81,7 @@ create table if not exists public.inventory (
   quantity integer not null default 1,
   equipped_slot text,
   created_at timestamptz not null default now(),
-  
+
   unique(player_id, item_id)
 );
 
@@ -91,6 +96,11 @@ alter table public.inventory enable row level security;
 create policy "Players can read own data"
   on public.players for select
   using (auth.uid() = id);
+
+-- Allow reading other players' basic info for proximity detection
+create policy "Players can read other players for proximity"
+  on public.players for select
+  using (true);
 
 create policy "Players can insert own data"
   on public.players for insert

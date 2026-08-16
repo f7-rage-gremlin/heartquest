@@ -219,3 +219,81 @@
 .navLabel {
   font-size: 10px;
 }
+
+/* Location Status */
+.locationStatus {
+  padding: var(--spacing-xs) var(--spacing-lg);
+  text-align: center;
+  font-size: 12px;
+}
+
+.tracking {
+  color: var(--color-success, #22c55e);
+}
+
+.error {
+  color: var(--color-danger, #ef4444);
+}
+
+.waiting {
+  color: var(--color-text-secondary);
+}
+
+/* Nearby Players (Dating Feature) */
+.playerList {
+  display: flex;
+  gap: var(--spacing-sm);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-sm);
+  -webkit-overflow-scrolling: touch;
+}
+
+.playerList::-webkit-scrollbar {
+  display: none;
+}
+
+.playerCard {
+  min-width: 140px;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--color-surface) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border: 2px solid var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.playerCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+}
+
+.playerCardAvatar {
+  font-size: 36px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.playerCardInfo {
+  text-align: center;
+}
+
+.playerCardName {
+  color: var(--color-text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  display: block;
+}
+
+.playerCardLevel {
+  color: var(--color-text-secondary);
+  font-size: 10px;
+}
+
+.playerCardDistance {
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: bold;
+  margin-top: var(--spacing-xs);
+}
